@@ -47,7 +47,7 @@ export const GET = async (req: NextRequest) => {
     await connectToDB()
 
     const collections = await Collection.find().sort({ createdAt: "desc" })
-    console.log('collections', collections);
+    // console.log('collections', collections);
 
     return NextResponse.json(collections, { status: 200 })
   } catch (err) {

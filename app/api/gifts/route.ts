@@ -73,6 +73,8 @@ export const GET = async (req: NextRequest) => {
     const gifts = await Gift.find()
       .sort({ createdAt: "desc" })
       .populate({ path: "collections", model: Collection });
+    // console.log('gifts', gifts);
+
 
     return NextResponse.json(gifts, { status: 200 });
   } catch (err) {
