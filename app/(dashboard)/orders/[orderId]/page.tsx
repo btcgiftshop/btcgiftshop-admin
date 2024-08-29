@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/custom ui/DataTable"
 import { columns } from "@/components/orderItems/OrderItemsColums"
 
-const OrderDetails = async ({ params }: { params: { orderId: string }}) => {
+const OrderDetails = async ({ params }: { params: { orderId: string } }) => {
   const res = await fetch(`${process.env.ADMIN_DASHBOARD_URL}/api/orders/${params.orderId}`)
   const { orderDetails, customer } = await res.json()
 
@@ -24,7 +24,7 @@ const OrderDetails = async ({ params }: { params: { orderId: string }}) => {
       <p className="text-base-bold">
         Shipping rate ID: <span className="text-base-medium">{orderDetails.shippingRate}</span>
       </p>
-      <DataTable columns={columns} data={orderDetails.products} searchKey="product"/>
+      <DataTable columns={columns} data={orderDetails.gifts} searchKey="gift" />
     </div>
   )
 }

@@ -3,10 +3,10 @@ type CollectionType = {
   title: string;
   description: string;
   image: string;
-  products: ProductType[];
+  gifts: GiftType[];
 }
 
-type ProductType = {
+type GiftType = {
   _id: string;
   title: string;
   description: string;
@@ -25,13 +25,13 @@ type ProductType = {
 type OrderColumnType = {
   _id: string;
   customer: string;
-  products: number;
+  gifts: number;
   totalAmount: number;
   createdAt: string;
 }
 
 type OrderItemType = {
-  product: ProductType
+  gift: GiftType
   color: string;
   size: string;
   quantity: number;

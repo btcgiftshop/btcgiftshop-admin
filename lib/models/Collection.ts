@@ -11,10 +11,10 @@ const collectionSchema = new mongoose.Schema({
     type: String,
     // required: true,
   },
-  products: [
+  gifts: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
+      ref: "Gift",
     }
   ],
   createdAt: {

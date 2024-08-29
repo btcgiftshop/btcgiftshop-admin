@@ -34,16 +34,16 @@ export const POST = async (req: NextRequest) => {
 
       const retrieveSession = await stripe.checkout.sessions.retrieve(
         session.id,
-        { expand: ["line_items.data.price.product"]}
+        { expand: ["line_items.data.price.gift"] }
       )
 
       const lineItems = await retrieveSession?.line_items?.data
 
       const orderItems = lineItems?.map((item: any) => {
         return {
-          product: item.price.product.metadata.productId,
-          color: item.price.product.metadata.color || "N/A",
-          size: item.price.product.metadata.size || "N/A",
+          gift: item.price.gift.metadata.giftId,
+          color: item.price.gift.metadata.color || "N/A",
+          size: item.price.gift.metadata.size || "N/A",
           quantity: item.quantity,
         }
       })
@@ -52,7 +52,7 @@ export const POST = async (req: NextRequest) => {
 
       const newOrder = new Order({
         customerClerkId: customerInfo.clerkId,
-        products: orderItems,
+        gifts: orderItems,
         shippingAddress,
         shippingRate: session?.shipping_cost?.shipping_rate,
         totalAmount: session.amount_total ? session.amount_total / 100 : 0,

@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
   customerClerkId: String,
-  products: [
+  gifts: [
     {
-      product: {
+      gift: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        ref: "Gift",
       },
       color: String,
       size: String,

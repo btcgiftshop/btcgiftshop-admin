@@ -18,9 +18,9 @@ export const columns: ColumnDef<CollectionType>[] = [
     ),
   },
   {
-    accessorKey: "products",
-    header: "Products",
-    cell: ({ row }) => <p>{row.original.products.length}</p>,
+    accessorKey: "gifts",
+    header: "Gifts",
+    cell: ({ row }) => <p>{row.original.gifts.length}</p>,
   },
   {
     id: "actions",

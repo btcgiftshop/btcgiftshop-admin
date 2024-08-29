@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 import { connectToDB } from "@/lib/mongoDB";
-import Product from "@/lib/models/Product";
+import Gift from "@/lib/models/Gift";
 import Collection from "@/lib/models/Collection";
 
 export const POST = async (req: NextRequest) => {
@@ -29,12 +29,12 @@ export const POST = async (req: NextRequest) => {
     } = await req.json();
 
     if (!title || !description || !media || !category || !price || !expense) {
-      return new NextResponse("Not enough data to create a product", {
+      return new NextResponse("Not enough data to create a gift", {
         status: 400,
       });
     }
 
-    const newProduct = await Product.create({
+    const newGift = await Gift.create({
       title,
       description,
       media,
@@ -47,21 +47,21 @@ export const POST = async (req: NextRequest) => {
       expense,
     });
 
-    await newProduct.save();
+    await newGift.save();
 
     if (collections) {
       for (const collectionId of collections) {
         const collection = await Collection.findById(collectionId);
         if (collection) {
-          collection.products.push(newProduct._id);
+          collection.gifts.push(newGift._id);
           await collection.save();
         }
       }
     }
 
-    return NextResponse.json(newProduct, { status: 200 });
+    return NextResponse.json(newGift, { status: 200 });
   } catch (err) {
-    console.log("[products_POST]", err);
+    console.log("[gifts_POST]", err);
     return new NextResponse("Internal Error", { status: 500 });
   }
 };
@@ -70,13 +70,13 @@ export const GET = async (req: NextRequest) => {
   try {
     await connectToDB();
 
-    const products = await Product.find()
+    const gifts = await Gift.find()
       .sort({ createdAt: "desc" })
       .populate({ path: "collections", model: Collection });
 
-    return NextResponse.json(products, { status: 200 });
+    return NextResponse.json(gifts, { status: 200 });
   } catch (err) {
-    console.log("[products_GET]", err);
+    console.log("[gifts_GET]", err);
     return new NextResponse("Internal Error", { status: 500 });
   }
 };

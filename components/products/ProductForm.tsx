@@ -38,11 +38,11 @@ const formSchema = z.object({
   expense: z.coerce.number().min(0.1),
 });
 
-interface ProductFormProps {
-  initialData?: ProductType | null; //Must have "?" to make it optional
+interface GiftFormProps {
+  initialData?: GiftType | null; //Must have "?" to make it optional
 }
 
-const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
+const GiftForm: React.FC<GiftFormProps> = ({ initialData }) => {
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
@@ -70,23 +70,23 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
     resolver: zodResolver(formSchema),
     defaultValues: initialData
       ? {
-          ...initialData,
-          collections: initialData.collections.map(
-            (collection) => collection._id
-          ),
-        }
+        ...initialData,
+        collections: initialData.collections.map(
+          (collection) => collection._id
+        ),
+      }
       : {
-          title: "",
-          description: "",
-          media: [],
-          category: "",
-          collections: [],
-          tags: [],
-          sizes: [],
-          colors: [],
-          price: 0.1,
-          expense: 0.1,
-        },
+        title: "",
+        description: "",
+        media: [],
+        category: "",
+        collections: [],
+        tags: [],
+        sizes: [],
+        colors: [],
+        price: 0.1,
+        expense: 0.1,
+      },
   });
 
   const handleKeyPress = (
@@ -103,20 +103,20 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
     try {
       setLoading(true);
       const url = initialData
-        ? `/api/products/${initialData._id}`
-        : "/api/products";
+        ? `/api/gifts/${initialData._id}`
+        : "/api/gifts";
       const res = await fetch(url, {
         method: "POST",
         body: JSON.stringify(values),
       });
       if (res.ok) {
         setLoading(false);
-        toast.success(`Product ${initialData ? "updated" : "created"}`);
-        window.location.href = "/products";
-        router.push("/products");
+        toast.success(`Gift ${initialData ? "updated" : "created"}`);
+        window.location.href = "/gifts";
+        router.push("/gifts");
       }
     } catch (err) {
-      console.log("[products_POST]", err);
+      console.log("[gifts_POST]", err);
       toast.error("Something went wrong! Please try again.");
     }
   };
@@ -127,11 +127,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
     <div className="p-10">
       {initialData ? (
         <div className="flex items-center justify-between">
-          <p className="text-heading2-bold">Edit Product</p>
-          <Delete id={initialData._id} item="product" />
+          <p className="text-heading2-bold">Edit Gift</p>
+          <Delete id={initialData._id} item="gift" />
         </div>
       ) : (
-        <p className="text-heading2-bold">Create Product</p>
+        <p className="text-heading2-bold">Create Gift</p>
       )}
       <Separator className="bg-grey-1 mt-4 mb-7" />
       <Form {...form}>
@@ -358,7 +358,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
             </Button>
             <Button
               type="button"
-              onClick={() => router.push("/products")}
+              onClick={() => router.push("/gifts")}
               className="bg-blue-1 text-white"
             >
               Discard
@@ -370,4 +370,4 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
   );
 };
 
-export default ProductForm;
+export default GiftForm;

@@ -1,5 +1,5 @@
 import Collection from "@/lib/models/Collection";
-import Product from "@/lib/models/Product";
+import Gift from "@/lib/models/Gift";
 import { connectToDB } from "@/lib/mongoDB";
 import { auth } from "@clerk/nextjs";
 
@@ -7,23 +7,23 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
   req: NextRequest,
-  { params }: { params: { productId: string } }
+  { params }: { params: { giftId: string } }
 ) => {
   try {
     await connectToDB();
 
-    const product = await Product.findById(params.productId).populate({
+    const gift = await Gift.findById(params.giftId).populate({
       path: "collections",
       model: Collection,
     });
 
-    if (!product) {
+    if (!gift) {
       return new NextResponse(
-        JSON.stringify({ message: "Product not found" }),
+        JSON.stringify({ message: "Gift not found" }),
         { status: 404 }
       );
     }
-    return new NextResponse(JSON.stringify(product), {
+    return new NextResponse(JSON.stringify(gift), {
       status: 200,
       headers: {
         "Access-Control-Allow-Origin": `${process.env.ECOMMERCE_STORE_URL}`,
@@ -32,14 +32,14 @@ export const GET = async (
       },
     });
   } catch (err) {
-    console.log("[productId_GET]", err);
+    console.log("[giftId_GET]", err);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
 
 export const POST = async (
   req: NextRequest,
-  { params }: { params: { productId: string } }
+  { params }: { params: { giftId: string } }
 ) => {
   try {
     const { userId } = auth();
@@ -50,11 +50,11 @@ export const POST = async (
 
     await connectToDB();
 
-    const product = await Product.findById(params.productId);
+    const gift = await Gift.findById(params.giftId);
 
-    if (!product) {
+    if (!gift) {
       return new NextResponse(
-        JSON.stringify({ message: "Product not found" }),
+        JSON.stringify({ message: "Gift not found" }),
         { status: 404 }
       );
     }
@@ -73,41 +73,41 @@ export const POST = async (
     } = await req.json();
 
     if (!title || !description || !media || !category || !price || !expense) {
-      return new NextResponse("Not enough data to create a new product", {
+      return new NextResponse("Not enough data to create a new gift", {
         status: 400,
       });
     }
 
     const addedCollections = collections.filter(
-      (collectionId: string) => !product.collections.includes(collectionId)
+      (collectionId: string) => !gift.collections.includes(collectionId)
     );
     // included in new data, but not included in the previous data
 
-    const removedCollections = product.collections.filter(
+    const removedCollections = gift.collections.filter(
       (collectionId: string) => !collections.includes(collectionId)
     );
     // included in previous data, but not included in the new data
 
     // Update collections
     await Promise.all([
-      // Update added collections with this product
+      // Update added collections with this gift
       ...addedCollections.map((collectionId: string) =>
         Collection.findByIdAndUpdate(collectionId, {
-          $push: { products: product._id },
+          $push: { gifts: gift._id },
         })
       ),
 
-      // Update removed collections without this product
+      // Update removed collections without this gift
       ...removedCollections.map((collectionId: string) =>
         Collection.findByIdAndUpdate(collectionId, {
-          $pull: { products: product._id },
+          $pull: { gifts: gift._id },
         })
       ),
     ]);
 
-    // Update product
-    const updatedProduct = await Product.findByIdAndUpdate(
-      product._id,
+    // Update gift
+    const updatedGift = await Gift.findByIdAndUpdate(
+      gift._id,
       {
         title,
         description,
@@ -123,18 +123,18 @@ export const POST = async (
       { new: true }
     ).populate({ path: "collections", model: Collection });
 
-    await updatedProduct.save();
+    await updatedGift.save();
 
-    return NextResponse.json(updatedProduct, { status: 200 });
+    return NextResponse.json(updatedGift, { status: 200 });
   } catch (err) {
-    console.log("[productId_POST]", err);
+    console.log("[giftId_POST]", err);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
 
 export const DELETE = async (
   req: NextRequest,
-  { params }: { params: { productId: string } }
+  { params }: { params: { giftId: string } }
 ) => {
   try {
     const { userId } = auth();
@@ -145,31 +145,31 @@ export const DELETE = async (
 
     await connectToDB();
 
-    const product = await Product.findById(params.productId);
+    const gift = await Gift.findById(params.giftId);
 
-    if (!product) {
+    if (!gift) {
       return new NextResponse(
-        JSON.stringify({ message: "Product not found" }),
+        JSON.stringify({ message: "Gift not found" }),
         { status: 404 }
       );
     }
 
-    await Product.findByIdAndDelete(product._id);
+    await Gift.findByIdAndDelete(gift._id);
 
     // Update collections
     await Promise.all(
-      product.collections.map((collectionId: string) =>
+      gift.collections.map((collectionId: string) =>
         Collection.findByIdAndUpdate(collectionId, {
-          $pull: { products: product._id },
+          $pull: { gifts: gift._id },
         })
       )
     );
 
-    return new NextResponse(JSON.stringify({ message: "Product deleted" }), {
+    return new NextResponse(JSON.stringify({ message: "Gift deleted" }), {
       status: 200,
     });
   } catch (err) {
-    console.log("[productId_DELETE]", err);
+    console.log("[giftId_DELETE]", err);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

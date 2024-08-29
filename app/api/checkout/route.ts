@@ -32,10 +32,10 @@ export async function POST(req: NextRequest) {
       line_items: cartItems.map((cartItem: any) => ({
         price_data: {
           currency: "cad",
-          product_data: {
+          gift_data: {
             name: cartItem.item.title,
             metadata: {
-              productId: cartItem.item._id,
+              giftId: cartItem.item._id,
               ...(cartItem.size && { size: cartItem.size }),
               ...(cartItem.color && { color: cartItem.color }),
             },

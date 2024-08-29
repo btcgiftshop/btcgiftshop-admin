@@ -1,5 +1,5 @@
 import Order from "@/lib/models/Order";
-import Product from "@/lib/models/Product";
+import Gift from "@/lib/models/Gift";
 import { connectToDB } from "@/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,7 +12,7 @@ export const GET = async (
 
     const orders = await Order.find({
       customerClerkId: params.customerId,
-    }).populate({ path: "products.product", model: Product });
+    }).populate({ path: "gifts.gift", model: Gift });
 
     return NextResponse.json(orders, { status: 200 });
   } catch (err) {
