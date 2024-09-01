@@ -13,9 +13,9 @@ export async function OPTIONS() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { cartItems, customer } = await req.json();
+    const { giftboxItems, customer } = await req.json();
 
-    if (!cartItems || !customer) {
+    if (!giftboxItems || !customer) {
       return new NextResponse("Not enough data to checkout", { status: 400 });
     }
 
@@ -29,24 +29,24 @@ export async function POST(req: NextRequest) {
         { shipping_rate: "shr_1MfufhDgraNiyvtnDGef2uwK" },
         { shipping_rate: "shr_1OpHFHDgraNiyvtnOY4vDjuY" },
       ],
-      line_items: cartItems.map((cartItem: any) => ({
+      line_items: giftboxItems.map((giftboxItem: any) => ({
         price_data: {
           currency: "cad",
           gift_data: {
-            name: cartItem.item.title,
+            name: giftboxItem.item.title,
             metadata: {
-              giftId: cartItem.item._id,
-              ...(cartItem.size && { size: cartItem.size }),
-              ...(cartItem.color && { color: cartItem.color }),
+              giftId: giftboxItem.item._id,
+              ...(giftboxItem.size && { size: giftboxItem.size }),
+              ...(giftboxItem.color && { color: giftboxItem.color }),
             },
           },
-          unit_amount: cartItem.item.price * 100,
+          unit_amount: giftboxItem.item.price * 100,
         },
-        quantity: cartItem.quantity,
+        quantity: giftboxItem.quantity,
       })),
       client_reference_id: customer.clerkId,
       success_url: `${process.env.BTCGS_APP_URL}/payment_success`,
-      cancel_url: `${process.env.BTCGS_APP_URL}/cart`,
+      cancel_url: `${process.env.BTCGS_APP_URL}/giftbox`,
     });
 
     return NextResponse.json(session, { headers: corsHeaders });
